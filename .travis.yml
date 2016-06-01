@@ -11,8 +11,6 @@ services:
 
 before_script:
   - npm run start-services
-  - docker-machine env
-  - docker-machine ip
   - sleep 3
 
 after_script:
