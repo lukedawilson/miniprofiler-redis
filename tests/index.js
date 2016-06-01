@@ -6,8 +6,11 @@ var http = require('http');
 var request = require('request');
 var ip = require('docker-ip');
 
+console.log(ip())
+
 var redis = require('redis');
 var client = redis.createClient(6379, ip());
+console.log(client)
 
 describe('Redis Tests', function() {
   var server = http.createServer((request, response) => {
