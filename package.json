@@ -34,7 +34,7 @@
     "docker-ip": "^2.0.1",
     "eslint": "^2.11.0",
     "istanbul": "^0.4.3",
-    "miniprofiler": "^0.2.0",
+    "miniprofiler": "^0.2.3",
     "mocha": "^2.5.3",
     "redis": "^2.6.1",
     "request": "^2.72.0"
