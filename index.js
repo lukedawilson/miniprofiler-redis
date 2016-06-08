@@ -10,12 +10,19 @@ module.exports = function(redis) {
     name: 'redis',
     handler: function(req, res, next) {
 
-      redis.RedisClient.prototype.internal_send_command = !req.miniprofiler || !req.miniprofiler.enabled ? redisSendCommand : function(command, args, callback) {
-        var query = `${command} ${args.join(', ')}`.trim();
-        if (this.ready && blacklist.indexOf(command) == -1)
-          req.miniprofiler.timeQuery('redis', query, redisSendCommand.bind(this), command, args, callback);
-        else
-          redisSendCommand.call(this, command, args, callback);
+      redis.RedisClient.prototype.internal_send_command = !req.miniprofiler || !req.miniprofiler.enabled ? redisSendCommand : function(cmd) {
+        if (this.ready && blacklist.indexOf(cmd.command) == -1) {
+          var callback = cmd.callback;
+          if (callback) {
+            var query = `${cmd.command} ${cmd.args.join(', ')}`.trim();
+            var timing = req.miniprofiler.startTimeQuery('redis', query);
+            cmd.callback = function() {
+              req.miniprofiler.stopTimeQuery(timing);
+              callback.apply(this, arguments);
+            };
+          }
+        }
+        redisSendCommand.call(this, cmd);
       };
 
       next();

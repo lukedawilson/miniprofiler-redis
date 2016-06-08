@@ -1,6 +1,6 @@
 {
   "name": "miniprofiler-redis",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A redis provider for miniprofiler timing analysis",
   "main": "index.js",
   "scripts": {
@@ -36,7 +36,7 @@
     "istanbul": "^0.4.3",
     "miniprofiler": "^0.2.0",
     "mocha": "^2.5.3",
-    "redis": "^2.6.0-2",
+    "redis": "^2.6.1",
     "request": "^2.72.0"
   }
 }
