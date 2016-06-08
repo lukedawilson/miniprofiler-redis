@@ -1,7 +1,7 @@
 {
   "name": "miniprofiler-redis",
   "version": "0.0.1",
-  "description": "A redis miniprofiler provider for timing analysis",
+  "description": "A redis provider for miniprofiler timing analysis",
   "main": "index.js",
   "scripts": {
     "start-services": "docker run -d -p 6060:6379 redis",
