@@ -1,6 +1,6 @@
 {
   "name": "miniprofiler-redis",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A redis provider for miniprofiler timing analysis",
   "main": "index.js",
   "scripts": {

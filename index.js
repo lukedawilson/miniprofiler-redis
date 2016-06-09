@@ -13,7 +13,7 @@ module.exports = function(redis) {
       redis.RedisClient.prototype.internal_send_command = !req.miniprofiler || !req.miniprofiler.enabled ? redisSendCommand : function(cmd) {
         if (this.ready && blacklist.indexOf(cmd.command) == -1) {
           var callback = cmd.callback;
-          if (callback) {
+          if (callback && req && req.miniprofiler) {
             var query = `${cmd.command} ${cmd.args.join(', ')}`.trim();
             var timing = req.miniprofiler.startTimeQuery('redis', query);
             cmd.callback = function() {
