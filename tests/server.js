@@ -1,14 +1,20 @@
 'use strict';
 
-var miniprofiler = require('miniprofiler');
-var http = require('http');
-var ip = require('docker-ip');
+const miniprofiler = require('miniprofiler');
+const http = require('http');
+const ip = require('docker-ip');
 
-var redis = require('redis');
-var client = redis.createClient(6060, ip());
+const redis = require('redis');
+const client = redis.createClient(6060, ip());
 
-var server = http.createServer((request, response) => {
-  miniprofiler.express((req, res) => { return !req.url.startsWith('/unprofiled'); })(request, response, () => {
+const app = miniprofiler.express({
+  enable: (req, res) => {
+    return !req.url.startsWith('/unprofiled');
+  }
+});
+
+const server = http.createServer((request, response) => {
+  app(request, response, () => {
     require('../index.js')(redis).handler(request, response, () => {
 
       if (request.url == '/redis-info') {

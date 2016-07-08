@@ -1,7 +1,7 @@
 'use strict';
 
-var redisSendCommand;
-var blacklist = ['info'];
+let redisSendCommand;
+const blacklist = ['info'];
 
 module.exports = function(redis) {
   redisSendCommand = redisSendCommand || redis.RedisClient.prototype.internal_send_command;
@@ -12,10 +12,10 @@ module.exports = function(redis) {
 
       redis.RedisClient.prototype.internal_send_command = !req.miniprofiler || !req.miniprofiler.enabled ? redisSendCommand : function(cmd) {
         if (this.ready && blacklist.indexOf(cmd.command) == -1) {
-          var callback = cmd.callback;
+          const callback = cmd.callback;
           if (callback && req && req.miniprofiler) {
-            var query = `${cmd.command} ${cmd.args.join(', ')}`.trim();
-            var timing = req.miniprofiler.startTimeQuery('redis', query);
+            const query = `${cmd.command} ${cmd.args.join(', ')}`.trim();
+            const timing = req.miniprofiler.startTimeQuery('redis', query);
             cmd.callback = function() {
               req.miniprofiler.stopTimeQuery(timing);
               callback.apply(this, arguments);

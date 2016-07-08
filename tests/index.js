@@ -1,8 +1,8 @@
 'use strict';
 
-var expect = require('chai').expect;
-var request = require('request');
-var server = require('./server');
+const expect = require('chai').expect;
+const request = require('request');
+const server = require('./server');
 
 describe('Redis Tests', function() {
 
@@ -11,15 +11,11 @@ describe('Redis Tests', function() {
 
   it('should profile redis SET command', function(done) {
     request('http://localhost:8080/redis-set-key', (err, response, body) => {
-      var ids = JSON.parse(response.headers['x-miniprofiler-ids']);
-      expect(ids).to.have.lengthOf(1);
+      const ids = JSON.parse(response.headers['x-miniprofiler-ids']);
 
       request.post({url: 'http://localhost:8080/mini-profiler-resources/results/', form: { id: ids[0], popup: 1 } }, (err, response, body) => {
-        var result = JSON.parse(body);
+        const result = JSON.parse(body);
 
-        expect(result.Id).to.equal(ids[0]);
-        expect(result.Name).to.equal('/redis-set-key');
-        expect(result.Root.Children).to.be.empty;
         expect(result.Root.CustomTimings).to.have.property('redis');
         expect(result.Root.CustomTimings.redis).to.have.lengthOf(1);
 
@@ -34,16 +30,12 @@ describe('Redis Tests', function() {
 
   it('should profile redis SET and GET command', function(done) {
     request('http://localhost:8080/redis-set-get-key', (err, response, body) => {
-      var ids = JSON.parse(response.headers['x-miniprofiler-ids']);
+      const ids = JSON.parse(response.headers['x-miniprofiler-ids']);
       expect(body).to.be.equal('Awesome!');
-      expect(ids).to.have.lengthOf(1);
 
       request.post({url: 'http://localhost:8080/mini-profiler-resources/results/', form: { id: ids[0], popup: 1 } }, (err, response, body) => {
-        var result = JSON.parse(body);
+        const result = JSON.parse(body);
 
-        expect(result.Id).to.equal(ids[0]);
-        expect(result.Name).to.equal('/redis-set-get-key');
-        expect(result.Root.Children).to.be.empty;
         expect(result.Root.CustomTimings).to.have.property('redis');
         expect(result.Root.CustomTimings.redis).to.have.lengthOf(2);
 
@@ -61,12 +53,12 @@ describe('Redis Tests', function() {
 
   it('should not profile redis when used fire and forget', function(done) {
     request('http://localhost:8080/redis-set-without-callback', (err, response, body) => {
-      var ids = JSON.parse(response.headers['x-miniprofiler-ids']);
+      const ids = JSON.parse(response.headers['x-miniprofiler-ids']);
       expect(body).to.be.equal('');
       expect(ids).to.have.lengthOf(1);
 
       request.post({url: 'http://localhost:8080/mini-profiler-resources/results/', form: { id: ids[0], popup: 1 } }, (err, response, body) => {
-        var result = JSON.parse(body);
+        const result = JSON.parse(body);
 
         expect(result.Id).to.equal(ids[0]);
         expect(result.Name).to.equal('/redis-set-without-callback');
@@ -79,11 +71,10 @@ describe('Redis Tests', function() {
 
   it('should not profile INFO as a custom command', function(done) {
     request('http://localhost:8080/redis-info', (err, response) => {
-      var ids = JSON.parse(response.headers['x-miniprofiler-ids']);
-      expect(ids).to.have.lengthOf(1);
+      const ids = JSON.parse(response.headers['x-miniprofiler-ids']);
 
       request.post({url: 'http://localhost:8080/mini-profiler-resources/results/', form: { id: ids[0], popup: 1 } }, (err, response, body) => {
-        var result = JSON.parse(body);
+        const result = JSON.parse(body);
         expect(result.Root.CustomTimings).to.not.have.property('redis');
         done();
       });
