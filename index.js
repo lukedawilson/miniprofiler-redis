@@ -8,24 +8,26 @@ module.exports = function(redis) {
 
   return {
     name: 'redis',
-    handler: function(req, res, next) {
+    install: function(asyncCtx) {
+      redis.RedisClient.prototype.internal_send_command = function(cmd) {
+        const miniprofiler = asyncCtx.miniprofiler
+        if (!miniprofiler || !miniprofiler.enabled)
+          return redisSendCommand.call(this, cmd);
 
-      redis.RedisClient.prototype.internal_send_command = !req.miniprofiler || !req.miniprofiler.enabled ? redisSendCommand : function(cmd) {
-        if (this.ready && blacklist.indexOf(cmd.command) == -1) {
+        if (this.ready && blacklist.indexOf(cmd.command) === -1) {
           const callback = cmd.callback;
-          if (callback && req && req.miniprofiler) {
+          if (callback) {
             const query = `${cmd.command} ${cmd.args.join(', ')}`.trim();
-            const timing = req.miniprofiler.startTimeQuery('redis', query);
+            const timing = miniprofiler.startTimeQuery('redis', query);
             cmd.callback = function() {
-              req.miniprofiler.stopTimeQuery(timing);
+              miniprofiler.stopTimeQuery(timing);
               callback.apply(this, arguments);
             };
           }
         }
+
         redisSendCommand.call(this, cmd);
       };
-
-      next();
     }
   };
 };
